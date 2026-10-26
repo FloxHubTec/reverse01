@@ -36,6 +36,7 @@ export const toolFamilyCatalog = (sources) => {
         ...sources.goContracts.GO_TOOL_CONTRACTS,
         ...sources.gpuContracts.GPU_TOOL_CONTRACTS,
         ...sources.il2cppContracts.IL2CPP_TOOL_CONTRACTS,
+        ...sources.unityAddressablesContracts.UNITY_ADDRESSABLES_TOOL_CONTRACTS,
         ...sources.modelContracts.MODEL_TOOL_CONTRACTS,
         ...sources.rustContracts.RUST_TOOL_CONTRACTS,
         ...sources.pythonPycContracts.PYTHON_PYC_TOOL_CONTRACTS,
@@ -351,6 +352,12 @@ export const providerCatalog = (sources) => {
     {
       identity: sources.il2cppProvider.IL2CPP_METADATA_PROVIDER_IDENTITY,
       contracts: sources.il2cppContracts.IL2CPP_TOOL_CONTRACTS,
+    },
+    {
+      identity:
+        sources.unityAddressablesProvider.UNITY_ADDRESSABLES_PROVIDER_IDENTITY,
+      contracts:
+        sources.unityAddressablesContracts.UNITY_ADDRESSABLES_TOOL_CONTRACTS,
     },
     {
       identity: sources.modelProvider.MODEL_ARTIFACT_PROVIDER_IDENTITY,
