@@ -272,7 +272,10 @@ cliTest.for(["CLI", "stdio MCP"] as const)(
       expected.set(`${extension}-argv`, ["inherit", null]);
       expected.set(`${extension}-callback`, ["default", null]);
     }
-    expected.set("cjs-var-argv", ["inherit", null]);
+    // execFile never forwards stdio; report the effective piped mode when the
+    // options object is definite. Annex-B argv ambiguity still leaves stdio
+    // dynamic because the options slot itself is uncertain.
+    expected.set("cjs-var-argv", ["pipe", null]);
     expected.set("cjs-hoisted-callback", ["default", null]);
     expected.set("import-equals-argv", ["inherit", null]);
     expected.set("import-equals-callback", ["default", null]);

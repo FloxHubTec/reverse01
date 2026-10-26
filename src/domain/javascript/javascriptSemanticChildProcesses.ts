@@ -425,6 +425,16 @@ const stdioMode = (
   )
     return "default";
   const lookup = staticObjectProperty(expression, "stdio", context.isNullish);
+  if (method === "exec" || method === "execFile") {
+    // Node's exec/execFile never forward `stdio` into spawn; stdout/stderr
+    // stay piped for the callback. When a stdio option is present, report
+    // that effective mode instead of the unused declaration.
+    if (lookup.status === "missing") return "default";
+    if (lookup.status !== "explicit") return "dynamic";
+    const value = unwrapJavaScriptExpression(lookup.property.value).node;
+    if (context.isNullish(value)) return "default";
+    return "pipe";
+  }
   if (lookup.status === "missing")
     return unsetStdioMode(expression, method, context);
   if (lookup.status !== "explicit") return "dynamic";

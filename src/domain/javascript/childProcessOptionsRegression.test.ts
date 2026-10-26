@@ -124,4 +124,33 @@ describe("child-process options detection", () => {
 
     expect(ir.childProcessSpawns).toHaveLength(3);
   });
+
+  it("reports the effective piped stdio for exec and execFile options", () => {
+    const ir = analyzeJavaScriptSemantics(`
+      import { exec, execFile, spawn } from "node:child_process";
+
+      exec("echo ignored", { stdio: "ignore" });
+      exec("echo inherited", { stdio: "inherit" });
+      execFile("tool", { stdio: "ignore" });
+      execFile("tool", [], { stdio: "inherit" });
+      execFile("tool", [], { stdio: ["ignore", "pipe", "pipe"] });
+      exec("echo dynamic", { stdio: input });
+      spawn("tool", { stdio: "ignore" });
+    `);
+
+    expect(
+      ir.childProcessSpawns.map(({ method, stdioMode }) => ({
+        method,
+        stdioMode,
+      })),
+    ).toEqual([
+      { method: "exec", stdioMode: "pipe" },
+      { method: "exec", stdioMode: "pipe" },
+      { method: "execFile", stdioMode: "pipe" },
+      { method: "execFile", stdioMode: "pipe" },
+      { method: "execFile", stdioMode: "pipe" },
+      { method: "exec", stdioMode: "pipe" },
+      { method: "spawn", stdioMode: "ignore" },
+    ]);
+  });
 });
