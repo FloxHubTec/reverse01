@@ -97,7 +97,7 @@ Notes app-ൽ search എങ്ങനെ പ്രവർത്തിക്കു�
 Extract ചെയ്ത JavaScript/Electron app directory അല്ലെങ്കിൽ ASAR പരിശോധിക്കുക:
 
 ```bash
-npx -y rea-agents@latest analyze-javascript-application /absolute/path/to/app --json
+npx -y rea-agents@6.8.0 analyze-javascript-application /absolute/path/to/app --json
 ```
 
 ഫലത്തിൽ modules, imports, Electron boundaries, അവയ്ക്കുള്ള തെളിവുകൾ എന്നിവ ഉൾപ്പെടും. `/absolute/path/to/app` എന്നതിന് പകരം നിങ്ങളുടെ target-ന്റെ path നൽകുക; Windows-ൽ ഉദാഹരണത്തിന് `"D:/apps/example"` ഉപയോഗിക്കാം.

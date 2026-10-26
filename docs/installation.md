@@ -14,7 +14,7 @@ Setup previews configuration changes and asks for approval before applying them.
 ## Start setup
 
 ```bash
-npx rea-agents setup
+npx rea-agents@6.8.0 setup
 ```
 
 Choose the agents to configure, review the proposed paths and changes, and
@@ -28,7 +28,9 @@ During package resolution, npm may print a deprecation warning for `prebuild-ins
 from transitive native dependencies (such as Frida). This warning originates from
 the upstream dependency tree and does not affect REA or indicate setup failure.
 
-For the latest published release, use `npx rea-agents@latest setup`.
+Prefer a version pin such as `@6.8.0`. `@latest` follows every publish; use
+`npx rea-agents@latest setup` only when you intentionally want the newest
+release on each invocation.
 [Package-runner and global-installation options](#package-runners-and-global-installation)
 cover explicit versions, Bun, runtime requirements, and the curl wrapper.
 
@@ -257,7 +259,7 @@ environment and can otherwise inspect or recreate default-profile state:
 ```bash
 CLAUDE_CONFIG_DIR=~/.claude-rea claude mcp list
 CLAUDE_CONFIG_DIR=~/.claude-rea npx rea-agents doctor --client claude_code --skill --json
-CLAUDE_CONFIG_DIR=~/.claude-rea npx -y rea-agents@latest setup --client claude_code --dry-run
+CLAUDE_CONFIG_DIR=~/.claude-rea npx -y rea-agents@6.8.0 setup --client claude_code --dry-run
 ```
 
 After reviewing an update plan, rerun that same prefixed setup command without
@@ -283,7 +285,7 @@ try {
   npx rea-agents setup --client claude_code
   claude mcp list
   npx rea-agents doctor --client claude_code --skill --json
-  npx -y rea-agents@latest setup --client claude_code --dry-run
+  npx -y rea-agents@6.8.0 setup --client claude_code --dry-run
   # After reviewing the plan, repeat setup without --dry-run and approve it.
   claude
   # Profile removal, when intended, also belongs inside this selected scope:
@@ -588,7 +590,7 @@ and the release boundary above. Static JavaScript CLI inspection can proceed
 while MCP is unavailable:
 
 ```bash
-npx -y rea-agents@latest analyze-javascript-application /absolute/path/to/app --json
+npx -y rea-agents@6.8.0 analyze-javascript-application /absolute/path/to/app --json
 ```
 
 It returns the complete Evidence record directly and requires no native engine.
@@ -1567,17 +1569,18 @@ the client's MCP startup deadline and may need one more restart.
 
 ## Package runners and global installation
 
-A package-runner invocation can use a REA version installed in the current project. To
-request the latest release explicitly, use:
+A package-runner invocation can use a REA version installed in the current
+project. Prefer an explicit package version:
 
 ```bash
-npx rea-agents@latest setup
+npx rea-agents@6.8.0 setup
 ```
 
-REA runs the version npm selects. To update older agent registrations, run the
-latest-version command and review its setup plan. For unattended package
-downloads, add `--yes` before the package name; this does not approve REA's
-setup changes.
+To follow every publish, request the latest release explicitly with
+`npx rea-agents@latest setup`. REA runs the version npm selects. To update
+older agent registrations, run a reviewed setup plan for the version you want.
+For unattended package downloads, add `--yes` before the package name; this
+does not approve REA's setup changes.
 
 For an intentional rollback, make the package request explicit:
 
@@ -1613,8 +1616,10 @@ only.
 Running `npm install rea-agents` without `--global` installs the executable only
 in the current project's `node_modules/.bin`; it does not make `rea` available
 on the shell `PATH`. Use the setup command above for the guided setup
-journey, `npx -y rea-agents@latest` for unattended one-off commands, or install globally
-with `npm install --global rea-agents` for a shell-visible `rea` command.
+journey, `npx -y rea-agents@6.8.0` for a version-pinned unattended one-off
+command (`@latest` remains an opt-in to follow every publish), or install
+globally with `npm install --global rea-agents` for a shell-visible `rea`
+command.
 
 For many concurrent agent sessions, run setup directly from a global installation
 to avoid keeping a separate npm launcher process for each MCP connection:
@@ -1651,38 +1656,40 @@ without asking npm to resolve the workspace's dependency graph.
 
 ### Global installation wrapper
 
-The optional curl wrapper installs only the global npm package:
+The optional curl wrapper installs only the global npm package. The script
+itself fetches release metadata over HTTPS, never invokes `sudo`, prints the
+install plan before writing, and checks that the installed CLI version matches
+the selected package version. Prefer a reviewable, version-pinned installer:
+select the release version, download its tagged script, inspect the downloaded
+file, then install that package version:
+
+```bash
+rea_version=6.8.0
+curl -fsSL "https://raw.githubusercontent.com/morluto/rea/rea-agents-${rea_version}/install.sh" -o rea-install.sh
+less rea-install.sh
+bash rea-install.sh --version "$rea_version"
+```
+
+The tag pins the selected script revision; `--version` selects the npm package
+version. Neither the tagged download nor the `main` curl path verifies a
+signature on the script.
+
+It prints the version, runtime, npm command, and destination before installing.
+When a controlling terminal exists it starts `rea setup`; otherwise it prints
+the command to run later. Pass options after `--`, for example
+`bash rea-install.sh --dry-run`.
+
+Piping the `main` tip script runs whatever that branch holds at fetch time;
+treat it as an opt-in:
 
 ```bash
 curl -fsSL https://raw.githubusercontent.com/morluto/rea/main/install.sh | bash
 ```
 
-It prints the version, runtime, npm command, and destination before installing. When a controlling terminal exists it starts `rea setup`; otherwise it prints the command to run later.
-
-Pass options with `bash -s --`:
-
 ```bash
 curl -fsSL https://raw.githubusercontent.com/morluto/rea/main/install.sh |
   bash -s -- --dry-run
 ```
-
-To review a version-pinned installer before running it, select the release
-version, download its tagged script, and inspect the downloaded file:
-
-```bash
-rea_version=6.7.0
-curl -fsSL "https://raw.githubusercontent.com/morluto/rea/rea-agents-${rea_version}/install.sh" -o rea-install.sh
-less rea-install.sh
-```
-
-After reviewing it, install the same package version:
-
-```bash
-bash rea-install.sh --version "$rea_version"
-```
-
-The tag pins the selected script revision; `--version` selects the npm package
-version. Neither command verifies a signature on the downloaded script.
 
 Supported options are `--version <semver>`, `--dry-run`, `--no-setup`, `--no-prompt`, and `--verbose`. Neither `--no-prompt` nor a non-interactive shell grants permission to install external dependencies.
 
