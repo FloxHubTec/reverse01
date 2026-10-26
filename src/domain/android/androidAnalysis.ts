@@ -97,7 +97,8 @@ const textCoverage = z.strictObject({
   reported_total_bytes: z.int().nonnegative().nullable(),
 });
 
-const manifestComponent = z.strictObject({
+/** One projected manifest component; consumers narrow this exact shape. */
+export const androidManifestComponentSchema = z.strictObject({
   kind: z.enum([
     "activity",
     "activity-alias",
@@ -127,7 +128,7 @@ const manifestComponent = z.strictObject({
  */
 const manifestComponents = z.strictObject({
   status: z.enum(["complete", "partial", "unavailable"]),
-  items: z.array(manifestComponent),
+  items: z.array(androidManifestComponentSchema),
   limitations: z.array(z.string()),
 });
 /** A DEX prototype; hex parentheses also keep the advertised class valid in v mode. */

@@ -171,6 +171,32 @@ rea trace-android-references /path/Example.apk example.MainActivity --method-nam
 rea trace-android-references /path/Example.apk example.MainActivity --method-name select --overload-index 1
 ```
 
+Project expected native symbols for DEX-declared methods without opening an APK:
+
+```sh
+rea project-android-jni-names '{"class_name": "example.MainActivity", "methods": [{"method_name": "nativeInit", "dex_descriptor": "()V"}]}'
+```
+
+Equivalent MCP method is `project_android_jni_names`. It reports JNI short/long
+names and the JNA exact name per method from caller-selected declarations, so
+an expected `Java_pkg_Class_method` name can be searched in an extracted `.so`
+with the native providers. The descriptor is optional: without it only the
+short name is reported, because REA class inventory no longer reports DEX
+prototypes. Nested classes need the binary `$` form. A name
+match is a static binding hypothesis, not proof of loading or invocation;
+`RegisterNatives` registration stays unknown.
+
+Feed `inspect_android_package` declarations into `project_android_attack_surface`
+to separate exported components without a guarding permission from guarded and
+export-unknown ones, with an intent-action index, foreground-service types and
+provider authorities. Findings rank static declarations only; protection levels,
+reachability and exploitability stay unknown.
+
+For packed or split targets, follow the
+[packed and split APK playbook](android-packed-analysis.md): static pack
+detection, full split acquisition, isolated emulator dumping, and static
+re-analysis with linked provenance.
+
 Equivalent MCP methods are `inspect_android_package`, `search_android_classes`,
 `inspect_android_class`, `inspect_android_method` and `trace_android_references`.
 Every request includes `path`. Class/method operations use `class_name`,
@@ -241,6 +267,13 @@ the same source byte limit and explicit truncation reporting.
   exactly and only its displayed text is subject to the existing source byte cap.
   Summaries use the complete selected XML before that cap. Document types are
   unsupported; parsing does not load external DTDs, schemas, or XInclude files.
+  `components` carries that projection as `status` (`complete`, `partial`, or
+  `unavailable`), `items` and `limitations`: each item names its `kind`,
+  `declared_name` and resolved `name`, the declared `exported` value beside
+  Android's `exported_default` rule, the effective `permission` with its
+  `permission_source`, flattened intent-filter `actions` and `categories`,
+  `foreground_service_type`, provider `authorities`, and an explicit
+  `intent_filter_count`.
   Signature verification is explicitly `not_performed`.
 - Class search filters the engine's cached top-level names before transferring
   pages, then follows contiguous inventory positions without rescanning earlier
