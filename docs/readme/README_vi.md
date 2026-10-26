@@ -95,7 +95,7 @@ Thay Notes bằng ứng dụng mục tiêu và chỉ rõ tính năng bạn muố
 Kiểm tra thư mục ứng dụng JavaScript/Electron đã giải nén hoặc tệp ASAR:
 
 ```bash
-npx -y rea-agents@latest analyze-javascript-application /absolute/path/to/app --json
+npx -y rea-agents@6.8.0 analyze-javascript-application /absolute/path/to/app --json
 ```
 
 Kết quả bao gồm mô-đun, các khai báo import, ranh giới Electron và bằng chứng tương ứng. Thay đường dẫn bằng mục tiêu của bạn, chẳng hạn `"D:/apps/example"` trên Windows.

@@ -116,7 +116,7 @@ Replace Notes with your target app and the feature you want to understand.
 Inspect an extracted JavaScript/Electron app directory or ASAR:
 
 ```bash
-npx -y rea-agents@latest analyze-javascript-application /absolute/path/to/app --json
+npx -y rea-agents@6.8.0 analyze-javascript-application /absolute/path/to/app --json
 ```
 
 The result includes modules, imports, Electron boundaries and their evidence.
@@ -164,9 +164,11 @@ If you use `npx`, update your agent setup with:
 npx rea-agents@latest setup
 ```
 
-Review the setup changes and restart your agent. For one-off CLI commands,
-use `npx rea-agents@latest` followed by the command. With Bun, use
-`bunx rea-agents@latest` in place of `npx rea-agents@latest`.
+Review the setup changes and restart your agent. `@latest` follows every
+publish; use it when you intentionally want the newest release. For a
+version-pinned one-off CLI command, use `npx -y rea-agents@6.8.0` followed by
+the command. With Bun, use `bunx rea-agents@6.8.0` in place of
+`npx rea-agents@6.8.0`.
 
 ## How REA works
 

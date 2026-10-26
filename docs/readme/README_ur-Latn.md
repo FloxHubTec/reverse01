@@ -111,7 +111,7 @@ Notes ki jagah apni target app aur jis feature ko samajhna hai uska naam likhein
 Extract ki hui JavaScript/Electron app directory ya ASAR inspect karein:
 
 ```bash
-npx -y rea-agents@latest analyze-javascript-application /absolute/path/to/app --json
+npx -y rea-agents@6.8.0 analyze-javascript-application /absolute/path/to/app --json
 ```
 
 Natije mein modules, imports, Electron boundaries aur unke saboot milte hain.

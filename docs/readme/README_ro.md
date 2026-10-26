@@ -111,7 +111,7 @@ construiește o funcționalitate similară pentru proiectul meu.
 Inspectează directorul extras al unei aplicații JavaScript/Electron sau o arhivă ASAR:
 
 ```bash
-npx -y rea-agents@latest analyze-javascript-application /absolute/path/to/app --json
+npx -y rea-agents@6.8.0 analyze-javascript-application /absolute/path/to/app --json
 ```
 
 Rezultatul include modulele, importurile, delimitările dintre componentele Electron

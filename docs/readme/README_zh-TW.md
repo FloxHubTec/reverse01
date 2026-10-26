@@ -95,7 +95,7 @@ MCP 預設使用精簡輸入 Schema，以減少上下文開銷。需要完整欄
 檢查已解包的 JavaScript/Electron 應用目錄或 ASAR 檔案：
 
 ```bash
-npx -y rea-agents@latest analyze-javascript-application /absolute/path/to/app --json
+npx -y rea-agents@6.8.0 analyze-javascript-application /absolute/path/to/app --json
 ```
 
 結果包含模組、匯入、Electron 邊界及相關證據。將路徑替換為你的目標路徑，例如 Windows 上的 `"D:/apps/example"`。
