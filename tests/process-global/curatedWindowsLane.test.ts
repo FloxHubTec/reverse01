@@ -83,6 +83,12 @@ describe("curated Windows test lane", () => {
     );
   });
 
+  it("keeps real Git dependency-patch admission in the Windows lane", async () => {
+    expect(await explicitPaths("windows")).toContain(
+      "tests/boundary/filesystem/releaseProposal.test.ts",
+    );
+  });
+
   it("keeps Windows environment identity and layered setup regressions in the lane", async () => {
     expect(await explicitPaths("windows")).toEqual(
       expect.arrayContaining([
@@ -96,6 +102,18 @@ describe("curated Windows test lane", () => {
   it("keeps packed bridge verification under the retained native runtime lease in the lane", async () => {
     expect(await explicitPaths("windows")).toContain(
       "tests/boundary/process/packedBridgeVerification.test.ts",
+    );
+  });
+
+  it("keeps Windows-only path and snapshot admission cases in the lane", async () => {
+    // These files have cases that run only on Windows, so outside this lane
+    // CI never executes them.
+    expect(await explicitPaths("windows")).toEqual(
+      expect.arrayContaining([
+        "src/contracts/sessionPathInputs.test.ts",
+        "tests/boundary/filesystem/directAnalysisSnapshotReplay.test.ts",
+        "tests/boundary/mcp/rawBinaryMcp.test.ts",
+      ]),
     );
   });
 
