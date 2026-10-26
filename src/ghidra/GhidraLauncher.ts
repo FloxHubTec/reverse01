@@ -203,11 +203,25 @@ const ghidraLaunchCommandOutput = (
   return execFileFailureCapturedOutput(failure);
 };
 
-/** An expanded caller project opened only through an owned private copy. */
+/**
+ * A pre-imported Ghidra project opened with -process so import and
+ * auto-analysis costs paid outside this session are reused. The headless
+ * open selects the fixed project name `rea-project` unless `projectName`
+ * names another expanded project, so `projectPath` must hold the regular
+ * `.gpr` marker and `.rep` directory of that expanded project.
+ * Archives and incomplete layouts are rejected with their reason before
+ * Ghidra starts.
+ */
 export interface GhidraExistingProject {
-  /** Directory holding the selected .gpr marker and .rep data directory. */
+  /**
+   * Directory holding the expanded pre-imported project's `.gpr` marker and
+   * `.rep` data directory. Saved `.grez` archives must be restored outside
+   * REA before selecting this read-only workflow.
+   */
   readonly projectPath: string;
+  /** Selected project basename; absent opens the fixed `rea-project` copy. */
   readonly projectName?: string;
+  /** Committed content fingerprint revalidated against the owned copy. */
   readonly sha256?: string;
   /** Imported program name selected with -process. */
   readonly programName: string;
