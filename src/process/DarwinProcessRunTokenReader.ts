@@ -243,7 +243,7 @@ const compilerFailureFacts = (
         ? "exited"
         : failure.signal !== null
           ? "signaled"
-          : failure.code === "ENOENT"
+          : failure.spawnFailed === true
             ? "spawn_failed"
             : "failed";
   return {
@@ -284,6 +284,8 @@ const compilerOutcomeDescription = (
   }
   if (outcome.outcome === "signaled")
     return `compiler result: stopped by signal ${outcome.signal ?? "an unknown signal"}`;
+  if (outcome.outcome === "spawn_failed")
+    return `compiler result: could not start (${String(outcome.code)})`;
   return `compiler result: ${String(outcome.code)}`;
 };
 
@@ -301,9 +303,11 @@ const compilerInspectionError = (
       ? "xcrun"
       : "the selected Swift compiler (REA_DARWIN_SWIFTC_PATH)";
   const prefix =
-    code === "ENOENT"
-      ? `macOS process ownership inspection requires the Apple Swift compiler via ${launcher}`
-      : `macOS process ownership helper compilation failed via ${launcher}`;
+    outcome?.outcome !== "spawn_failed"
+      ? `macOS process ownership helper compilation failed via ${launcher}`
+      : code === "ENOENT"
+        ? `macOS process ownership inspection requires the Apple Swift compiler via ${launcher}`
+        : `macOS process ownership inspection could not start the Apple Swift compiler via ${launcher}`;
   const stderr = boundedUtf8Text(outcome?.stderr ?? "", STDERR_EXCERPT_LIMIT);
   const diagnostics = stderr.text.trim();
   const truncated =
