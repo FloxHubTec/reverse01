@@ -112,6 +112,10 @@ const MACHO_HEADER_MAGICS: readonly number[] = [
   0xfeedface, 0xfeedfacf, 0xcefaedfe, 0xcffaedfe,
 ];
 
+/** Whether a big-endian slice prefix is a Mach-O header magic in either byte order. */
+export const isMachoHeaderMagic = (magic: number | null | undefined): boolean =>
+  magic != null && MACHO_HEADER_MAGICS.includes(magic);
+
 interface FatHeaderFormat {
   readonly magic: number;
   readonly wide: boolean;
@@ -255,7 +259,7 @@ export const classifyFatContainerIdentity = (
     const magic = sliceHeaderAt(slice.offset);
     if (magic === undefined || magic === null)
       missingHeaders.push(slice.offset);
-    else if (MACHO_HEADER_MAGICS.includes(magic)) observedMachO = true;
+    else if (isMachoHeaderMagic(magic)) observedMachO = true;
     else observedNonMachO = true;
   }
   if (observedNonMachO) return { state: "not-mach-o" };
